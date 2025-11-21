@@ -89,9 +89,12 @@ function App() {
       </main>
 
       <footer className="relative z-10 px-6 py-12 border-t border-cyan-200/60 bg-white/70 backdrop-blur dark:border-slate-800 dark:bg-slate-900/60">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <p className="text-slate-600 dark:text-slate-400">© {new Date().getFullYear()} Arcyn. All rights reserved.</p>
-          <div className="text-slate-600 dark:text-slate-400">Arcyn Find</div>
+          <div className="flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
+            <a href="#" className="hover:text-slate-900 underline underline-offset-4 dark:hover:text-white">Privacy</a>
+            <a href="#" className="hover:text-slate-900 underline underline-offset-4 dark:hover:text-white">Terms</a>
+          </div>
         </div>
       </footer>
     </div>

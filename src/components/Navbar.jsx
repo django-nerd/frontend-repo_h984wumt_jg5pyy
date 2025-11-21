@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Menu, LogIn } from 'lucide-react'
+import { LogIn } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 
 export default function Navbar({ onSignIn, theme, onToggleTheme }) {
@@ -19,10 +19,6 @@ export default function Navbar({ onSignIn, theme, onToggleTheme }) {
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-            <button className="hidden md:inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors px-3 py-2 rounded-lg dark:text-slate-300 dark:hover:text-white">
-              <Menu className="h-4 w-4" />
-              <span>Menu</span>
-            </button>
             <button onClick={onSignIn} className="group inline-flex items-center gap-2 rounded-xl bg-white/70 hover:bg-white/90 text-slate-900 px-4 py-2 border border-cyan-200/60 backdrop-blur-md transition-all shadow-sm dark:bg-slate-900/60 dark:hover:bg-slate-900/80 dark:text-slate-100 dark:border-slate-700">
               <LogIn className="h-4 w-4 text-cyan-600 group-hover:text-cyan-700 dark:text-cyan-300" />
               <span className="font-medium">Sign In</span>
