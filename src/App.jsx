@@ -1,19 +1,25 @@
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import Navbar from './components/Navbar'
 import Hero3D from './components/Hero3D'
 import ScrollFrames from './components/ScrollFrames'
 
 function App() {
+  const hasAutoScrolledRef = useRef(false)
+
   const scrollToAuth = useCallback(() => {
     const el = document.getElementById('auth-frame')
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }, [])
 
   const onHalfway = useCallback(() => {
+    if (hasAutoScrolledRef.current) return
     const progress = window.scrollY / (document.body.scrollHeight - window.innerHeight)
     if (progress > 0.5) {
       const el = document.getElementById('auth-frame')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      if (el) {
+        hasAutoScrolledRef.current = true
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     }
   }, [])
 

@@ -11,6 +11,19 @@ export default function AuthInline() {
   const [message, setMessage] = useState('')
   const [session, setSession] = useState(null)
 
+  const fetchSession = async () => {
+    try {
+      const res = await fetch(`${apiBase}/auth/session`, { credentials: 'include' })
+      const data = await res.json()
+      if (data?.ok && data.session) {
+        const exp = data.session.expires_at
+        setSession({ expires_at: exp })
+        return true
+      }
+    } catch (e) {}
+    return false
+  }
+
   const startEmail = async (e) => {
     e?.preventDefault()
     if (!email) return
@@ -20,12 +33,12 @@ export default function AuthInline() {
       const res = await fetch(`${apiBase}/auth/email/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
+        credentials: 'include',
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.detail || 'Failed to start')
       setSent(true)
-      // For demo, backend returns code. Pre-fill to reduce friction.
       if (data?.code) setCode(data.code)
       setMessage('We sent a 6‑digit code to your email.')
     } catch (err) {
@@ -44,11 +57,13 @@ export default function AuthInline() {
       const res = await fetch(`${apiBase}/auth/email/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
+        body: JSON.stringify({ email, code }),
+        credentials: 'include',
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.detail || 'Invalid code')
-      setSession(data.session)
+      if (!res.ok || !data?.ok) throw new Error(data?.detail || 'Invalid code')
+      // cookie is set httpOnly; fetch session for UI
+      await fetchSession()
       setMessage('Signed in ✓')
     } catch (err) {
       setMessage(err.message)
@@ -57,24 +72,10 @@ export default function AuthInline() {
     }
   }
 
-  const oauth = async (provider) => {
-    setLoading(true)
-    setMessage('')
-    try {
-      const res = await fetch(`${apiBase}/auth/oauth/start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider })
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.detail || 'OAuth error')
-      setSession(data.session)
-      setMessage(`Signed in with ${provider} ✓`)
-    } catch (err) {
-      setMessage(err.message)
-    } finally {
-      setLoading(false)
-    }
+  const oauth = (provider) => {
+    // Use full-page redirect to backend start endpoint for production OAuth
+    const url = `${apiBase}/auth/oauth/start?provider=${encodeURIComponent(provider)}`
+    window.location.href = url
   }
 
   if (session) {
