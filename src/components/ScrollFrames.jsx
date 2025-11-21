@@ -1,14 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import AuthInline from './AuthInline'
 
-const Frame = ({ index, title, subtitle, children }) => {
+const Frame = ({ index, title, subtitle, children, id }) => {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] })
   const opacity = useTransform(scrollYProgress, [0, 1], [0.2, 1])
   const y = useTransform(scrollYProgress, [0, 1], [80, 0])
 
   return (
-    <section ref={ref} className="relative h-screen flex items-center justify-center">
+    <section ref={ref} id={id} className="relative h-screen flex items-center justify-center">
       <motion.div style={{ opacity, y }} className="relative w-full max-w-6xl mx-auto px-6">
         <div className="relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 md:p-12 shadow-[0_0_80px_rgba(169,107,255,0.18)]">
           <div className="absolute -inset-px rounded-3xl pointer-events-none" style={{
@@ -71,6 +72,12 @@ export default function ScrollFrames({ onHalfway }) {
         <Panel title="Collections" desc="Save and organize the best tools."/>
         <Panel title="Reviews" desc="Signal quality through community."/>
         <Panel title="Followings" desc="Track creators and updates."/>
+      </Frame>
+
+      <Frame id="auth-frame" title="Create your Arcyn profile" subtitle="Sign in to save, follow, and sync across devices.">
+        <div className="col-span-1 md:col-span-2">
+          <AuthInline />
+        </div>
       </Frame>
 
       <Frame title="Powered by Arcyn OS" subtitle="A lightweight, futuristic OS layer for AI discovery.">

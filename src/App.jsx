@@ -1,24 +1,21 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import Navbar from './components/Navbar'
 import Hero3D from './components/Hero3D'
 import ScrollFrames from './components/ScrollFrames'
-import AuthModal from './components/AuthModal'
 
 function App() {
-  const [authOpen, setAuthOpen] = useState(false)
+  const scrollToAuth = useCallback(() => {
+    const el = document.getElementById('auth-frame')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [])
 
-  const openAuth = useCallback(() => setAuthOpen(true), [])
-  const closeAuth = useCallback(() => setAuthOpen(false), [])
-
-  // Auto-suggest auth when user scrolls halfway down
-  useEffect(() => {
-    const onScroll = () => {
-      const progress = window.scrollY / (document.body.scrollHeight - window.innerHeight)
-      if (progress > 0.5 && !authOpen) setAuthOpen(true)
+  const onHalfway = useCallback(() => {
+    const progress = window.scrollY / (document.body.scrollHeight - window.innerHeight)
+    if (progress > 0.5) {
+      const el = document.getElementById('auth-frame')
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [authOpen])
+  }, [])
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -28,11 +25,11 @@ function App() {
         <div className="absolute top-1/3 -left-24 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
       </div>
 
-      <Navbar onSignIn={openAuth} />
+      <Navbar onSignIn={scrollToAuth} />
 
       <main className="relative">
         <Hero3D />
-        <ScrollFrames onHalfway={openAuth} />
+        <ScrollFrames onHalfway={onHalfway} />
       </main>
 
       <footer className="relative z-10 px-6 py-12 border-t border-white/10 bg-black/40 backdrop-blur">
@@ -41,8 +38,6 @@ function App() {
           <div className="text-white/60">Arcyn Find</div>
         </div>
       </footer>
-
-      <AuthModal open={authOpen} onOpenChange={(v)=> v ? openAuth() : closeAuth()} />
     </div>
   )
 }
